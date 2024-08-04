@@ -7,15 +7,15 @@ import 'https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js';
 import 'https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js';
 import 'https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js';
 
-// TODO: replace this with your web app's Firebase configuration
+// TODO: Ensure you have populated these fields in `app.yaml` before deploying.
 const firebaseConfig = {
-  apiKey: "AIzaSyBe71hO61pFiqXFJLflep2DnZHKbmQW2-8",
-  authDomain: "mesop-431518.firebaseapp.com",
-  projectId: "mesop-431518",
-  storageBucket: "mesop-431518.appspot.com",
-  messagingSenderId: "343295640635",
-  appId: "1:343295640635:web:39279c46a79d00e33f881e",
-  measurementId: "G-PB52GQNSLH"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
