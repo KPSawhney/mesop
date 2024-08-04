@@ -7,49 +7,17 @@ import 'https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js';
 import 'https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js';
 import 'https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js';
 
-// TODO: Ensure you have populated these fields in `app.yaml` before deploying.
-const firebaseConfig = {
-  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
-  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.REACT_APP_FIREBASE_APP_ID,
-  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-console.log('Firebase initialized');
-
-
-var uiConfig = {
-  signInSuccessUrl: '/hello_world',
-  signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
-  signInFlow: "popup",
-  // TODO: create ToS and privacy policy.
-  // // tosUrl and privacyPolicyUrl accept either url string or a callback
-  // // function.
-  // // Terms of service url/callback.
-  // tosUrl: '<your-tos-url>',
-  // // Privacy policy url/callback.
-  // privacyPolicyUrl: function () {
-  //   window.location.assign('<your-privacy-policy-url>');
-  // },
-};
-
-// Initialize the FirebaseUI Widget using Firebase.
-var ui = new firebaseui.auth.AuthUI(firebase.auth());
-
 class FirebaseAuthComponent extends LitElement {
   static properties = {
     isSignedIn: { type: Boolean },
     authChanged: { type: String },
+    firebaseConfig: { type: String }
   };
 
   constructor() {
     super();
     this.isSignedIn = false;
+    this.firebaseConfig = '';
   }
 
   createRenderRoot() {
@@ -57,7 +25,17 @@ class FirebaseAuthComponent extends LitElement {
     return this;
   }
 
-  firstUpdated() {
+  initializeFirebase() {
+    firebase.initializeApp(this.firebaseConfig);
+
+    var uiConfig = {
+      signInSuccessUrl: '/hello_world',
+      signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
+      signInFlow: "popup",  // Smoother UX.
+    };
+
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
+
     firebase.auth().onAuthStateChanged(
       async (user) => {
         if (user) {
@@ -74,6 +52,14 @@ class FirebaseAuthComponent extends LitElement {
       },
     );
     ui.start('#firebaseui-auth-container', uiConfig);
+  }
+
+  firstUpdated() {
+    const firebaseConfigAttr = this.firebaseConfig;
+    if (firebaseConfigAttr) {
+      this.firebaseConfig = JSON.parse(firebaseConfigAttr);
+      this.initializeFirebase();
+    }
   }
 
   signOut() {
@@ -98,9 +84,9 @@ class FirebaseAuthComponent extends LitElement {
             <span class="firebaseui-idp-text firebaseui-idp-text-long"
               >Sign out</span
             >
-          </button>
-        </div>
-      `;
+        </button>
+      </div>
+    `;
   }
 }
 
