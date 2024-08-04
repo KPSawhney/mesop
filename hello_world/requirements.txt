@@ -1,2 +1,3 @@
 mesop
+firebase-admin
 gunicorn
