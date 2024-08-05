@@ -10,6 +10,7 @@ from firebase_auth_component import (
 
 # Avoid re-initializing firebase app (useful for avoiding warning message because of hot reloads).
 if firebase_admin._DEFAULT_APP_NAME not in firebase_admin._apps:
+    # TODO - ensure you add your serviceAccountKey json Firebase file to `./secrets`
     cred = credentials.Certificate("secrets/serviceAccountKey.json")
     default_app = firebase_admin.initialize_app(cred)
 
