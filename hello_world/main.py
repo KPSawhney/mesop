@@ -14,32 +14,36 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
 
 
-def transform(input: str, history: list[mel.ChatMessage]):
-  products_schema = [
-    bigquery.SchemaField("product_id", "INT64"),
-    bigquery.SchemaField("product_type", "STRING"),
-    bigquery.SchemaField("title", "STRING"),
-    bigquery.SchemaField("status", "STRING"),
-    bigquery.SchemaField("created_timestamp", "TIMESTAMP"),
-    bigquery.SchemaField("collections", "STRING"),
-    bigquery.SchemaField("count_variants", "INT64"),
-    bigquery.SchemaField("has_product_image", "BOOL"),
-    bigquery.SchemaField("total_quantity_sold", "FLOAT64"),
-    bigquery.SchemaField("subtotal_sold", "FLOAT64"),
-    bigquery.SchemaField("quantity_sold_net_refunds", "FLOAT64"),
-    bigquery.SchemaField("subtotal_sold_net_refunds", "FLOAT64"),
-    bigquery.SchemaField("product_total_discount", "FLOAT64"),
-    bigquery.SchemaField("product_total_tax", "FLOAT64"),
-]
+def transform(q: str, history: list[mel.ChatMessage]):
+    """Takes user's input & chat history to ShopifyAI function."""
+    products_schema = [
+        bigquery.SchemaField("product_id", "INT64"),
+        bigquery.SchemaField("product_type", "STRING"),
+        bigquery.SchemaField("title", "STRING"),
+        bigquery.SchemaField("status", "STRING"),
+        bigquery.SchemaField("created_timestamp", "TIMESTAMP"),
+        bigquery.SchemaField("collections", "STRING"),
+        bigquery.SchemaField("count_variants", "INT64"),
+        bigquery.SchemaField("has_product_image", "BOOL"),
+        bigquery.SchemaField("total_quantity_sold", "FLOAT64"),
+        bigquery.SchemaField("subtotal_sold", "FLOAT64"),
+        bigquery.SchemaField("quantity_sold_net_refunds", "FLOAT64"),
+        bigquery.SchemaField("subtotal_sold_net_refunds", "FLOAT64"),
+        bigquery.SchemaField("product_total_discount", "FLOAT64"),
+        bigquery.SchemaField("product_total_tax", "FLOAT64"),
+    ]
 
-  prompt = f"""Prior chat history: {str(history)}
+    prompt = f"""Prior chat history: {str(history)}
 
-  New question: {input}
+  New question: {q}
   """
 
-  return shopify_ai.ask_gemini_about_products(
-      question=prompt, schema=products_schema, bq_client=BQ_CLIENT
-  )
+    return shopify_ai.ask_gemini_about_products(
+        question=prompt,
+        schema=products_schema,
+        bq_client=BQ_CLIENT,
+        project_id=GCP_PROJECT_ID
+    )
 
 
 @me.page(
@@ -57,4 +61,5 @@ def transform(input: str, history: list[mel.ChatMessage]):
     ),
 )
 def page():
-  mel.chat(transform, title="ShopifyAI", bot_user="Gemini")
+    """Mesop chat interface."""
+    mel.chat(transform, title="ShopifyAI", bot_user="Gemini")
