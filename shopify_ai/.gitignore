@@ -1,3 +1,4 @@
 secrets/
 .env
 venv/
+shopify_ai.egg-info/

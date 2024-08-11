@@ -5,7 +5,7 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 import mesop as me
 import mesop.labs as mel
-import shopify_ai
+from py import gemini_integration
 
 KEY_PATH = "secrets/serviceAccountKey.json"
 
@@ -44,16 +44,24 @@ def transform(q: str, history: list[mel.ChatMessage]):
         bigquery.SchemaField("product_total_tax", "FLOAT64"),
     ]
 
+    # Create the prompt based on chat history and new question
     prompt = f"""Prior chat history: {str(history)}
 
   New question: {q}
   """
 
-    return shopify_ai.ask_gemini_about_products(
+    # Create the QueryParams object to pass to the ShopifyAI function
+    query_params = gemini_integration.QueryParams(
         question=prompt,
         schema=str(products_schema),
+        project_id=GCP_PROJECT_ID,
+        max_retries=5  # Set the number of retries as needed
+    )
+
+    # Call the ask_gemini_about_products function and return the result
+    return gemini_integration.ask_gemini_about_products(
         bq_client=BQ_CLIENT,
-        project_id=GCP_PROJECT_ID
+        query_params=query_params
     )
 
 
