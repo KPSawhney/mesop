@@ -1,1 +1,1 @@
-web: gunicorn --bind :8080 mesop_app:me
+web: gunicorn --bind :8080 main:me
