@@ -1,5 +1,4 @@
 """Main file for ShopifyAI Mesop app."""
-import logging
 import os
 from google import generativeai as genai
 from google.cloud import bigquery
@@ -14,12 +13,13 @@ GCP_CREDS = service_account.Credentials.from_service_account_file(
     KEY_PATH,
     scopes=["https://www.googleapis.com/auth/cloud-platform"],
 )
+print('GCP Creds: %s', str(GCP_CREDS))
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
 BQ_CLIENT = bigquery.Client(
     project=GCP_PROJECT_ID,
     credentials=GCP_CREDS)
-logging.info('Created BQ client for project %s', BQ_CLIENT.project)
+print('Created BQ client for project %s', BQ_CLIENT.project)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
@@ -51,7 +51,7 @@ def transform(q: str, history: list[mel.ChatMessage]):
 
     return shopify_ai.ask_gemini_about_products(
         question=prompt,
-        schema=products_schema,
+        schema=str(products_schema),
         bq_client=BQ_CLIENT,
         project_id=GCP_PROJECT_ID
     )

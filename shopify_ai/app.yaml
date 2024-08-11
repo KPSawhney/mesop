@@ -15,5 +15,5 @@ resources:
   disk_size_gb: 10
 
 env_variables:
-  GCP_PROJECT_ID: "your_project_id"
-  GEMINI_API_KEY: "your_key"
+  GCP_PROJECT_ID: "mesop-431518"
+  GEMINI_API_KEY: "AIzaSyAmSEFznjPK3Rlsm1djdQM3WsTq-P_wNe0"
