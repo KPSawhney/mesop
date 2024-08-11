@@ -2,6 +2,7 @@
 
 import datetime
 import itertools
+import logging
 import random
 import faker
 from google import generativeai as genai
@@ -277,18 +278,22 @@ def ask_gemini_about_products(
       The answer to the question
     """
     model = genai.GenerativeModel(model_name)
+    logging.info('Created model: %s', model.model_name)
 
     retries = 0
     while retries < 3:
         try:
             sql_script = ask_gemini_to_write_sql_script(
                 question, schema, project_id)
+            logging.info('Got SQL script: %s', sql_script)
             sql_script = sql_script.replace('```sql', '').replace('```', '')
 
             query_job = bq_client.query(sql_script)
+            logging.info('Created query job...')
             results = query_job.result()
             df = results.to_dataframe()
             sql_results = df.to_markdown()
+            logging.info('Got SQL results...')
             sql_script = sqlparse.format(
                 sql_script, reindent=True, keyword_case='upper'
             )

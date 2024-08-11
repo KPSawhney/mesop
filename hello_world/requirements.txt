@@ -1,6 +1,7 @@
 mesop
 gunicorn
-google-generativeai
+google-auth
 google-cloud-bigquery
+google-generativeai
 faker
 sqlparse

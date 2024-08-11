@@ -1,14 +1,25 @@
 """Main file for ShopifyAI Mesop app."""
-
+import logging
 import os
 from google import generativeai as genai
 from google.cloud import bigquery
+from google.oauth2 import service_account
 import mesop as me
 import mesop.labs as mel
 import shopify_ai
 
+KEY_PATH = "secrets/serviceAccountKey.json"
+
+GCP_CREDS = service_account.Credentials.from_service_account_file(
+    KEY_PATH,
+    scopes=["https://www.googleapis.com/auth/cloud-platform"],
+)
+
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
-BQ_CLIENT = bigquery.Client(project=GCP_PROJECT_ID)
+BQ_CLIENT = bigquery.Client(
+    project=GCP_PROJECT_ID,
+    credentials=GCP_CREDS)
+logging.info('Created BQ client for project %s', BQ_CLIENT.project)
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=GEMINI_API_KEY)
