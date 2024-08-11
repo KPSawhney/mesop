@@ -1,18 +1,30 @@
 """Main file for ShopifyAI Mesop app."""
 import os
-from google import generativeai as genai
 from google.cloud import bigquery
 import mesop as me
 import mesop.labs as mel
 from py import gemini_integration
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
-BQ_CLIENT = bigquery.Client(project=GCP_PROJECT_ID)
-print('Created BQ client for project %s', BQ_CLIENT.project)
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=GEMINI_API_KEY)
-print('Configured Genai with Gemini API key')
+print('Project ID is: ', GCP_PROJECT_ID)
+# Check if running on App Engine
+if os.getenv("GAE_ENV", "").startswith("standard"):
+    BQ_CLIENT = bigquery.Client(project=GCP_PROJECT_ID)
+    print("Running on Google App Engine, using default credentials.")
+else:
+    from google.oauth2 import service_account
+
+    KEY_PATH = "secrets/serviceAccountKey.json"
+    GCP_CREDS = service_account.Credentials.from_service_account_file(
+        KEY_PATH,
+        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+    )
+    BQ_CLIENT = bigquery.Client(
+        project=GCP_PROJECT_ID,
+        credentials=GCP_CREDS
+    )
+    print("Running locally, using service account credentials.")
 
 
 def transform(q: str, history: list[mel.ChatMessage]):
@@ -58,16 +70,6 @@ def transform(q: str, history: list[mel.ChatMessage]):
 @me.page(
     path="/shopify_ai",
     title="ShopifyAI",
-    # Loosen the security policy so the firebase JS libraries work.
-    security_policy=me.SecurityPolicy(
-        dangerously_disable_trusted_types=True,
-        allowed_connect_srcs=["*.googleapis.com"],
-        allowed_script_srcs=[
-            "*.google.com",
-            "https://www.gstatic.com",
-            "https://cdn.jsdelivr.net",
-        ],
-    ),
 )
 def page():
     """Mesop chat interface."""

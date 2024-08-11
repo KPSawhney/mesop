@@ -25,6 +25,19 @@ This document details a web application built with Mesop that leverages Gemini t
    ```bash
    pip install -r requirements.txt
    ```
+
+   ```bash
+   export GCP_PROJECT_ID="your_project_id"
+   ```
+
+   ```bash
+   export GEMINI_API_KEY="your_gemini_api_key"
+   ```
+
+   ```bash
+   export GOOGLE_APPLICATION_CREDENTIALS="secrets/serviceAccountKey.json"
+   ```
+
 2. **Set environment variables:**
    * Replace the placeholder values in `app.yaml` with your Firebase project's configuration (if deploying to Google App Engine).
    * Set the following environment variables:

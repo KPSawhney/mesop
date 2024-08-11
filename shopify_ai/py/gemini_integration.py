@@ -99,19 +99,22 @@ def ask_gemini_about_products(
     max_retries = query_params.max_retries
 
     model = genai.GenerativeModel(model_name)
-    print('Created model: %s', model_name)
+    print('Created model: model_name')
 
     retries = 0
     while retries < max_retries:
         try:
             sql_script = ask_gemini_to_write_sql_script(
                 query_params=query_params)
+            print(f'Got SQL script: {sql_script}')
             sql_script = sql_script.replace('```sql', '').replace('```', '')
 
             query_job = bq_client.query(sql_script)
+            print('Created query job: ', query_job)
             results = query_job.result()
             df = results.to_dataframe()
             sql_results = df.to_markdown()
+            print(f'Got results: {sql_results}')
             sql_script = sqlparse.format(
                 sql_script, reindent=True, keyword_case='upper'
             )
@@ -122,8 +125,9 @@ def ask_gemini_about_products(
             )
             result = model.generate_content(prompt)
             return result.text
-        except Exception:  # pylint: disable=broad-except
-            print(f'Retrying, attempt {retries} of {max_retries}')
+        except Exception as e:  # pylint: disable=broad-except
             retries += 1
+            print(f'Retrying, attempt {retries} of {max_retries}')
+            print('Encountered error: ', e)
             continue
     return "Sorry, I couldn't complete the operation after multiple attempts."
