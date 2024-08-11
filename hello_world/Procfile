@@ -1,1 +1,1 @@
-web: gunicorn --bind :8080 hello_world:me
+web: gunicorn --bind :8080 main:me

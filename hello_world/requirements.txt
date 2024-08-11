@@ -1,3 +1,6 @@
 mesop
-firebase-admin
 gunicorn
+google-generativeai
+google-cloud-bigquery
+faker
+sqlparse
