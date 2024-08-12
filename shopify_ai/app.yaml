@@ -15,5 +15,6 @@ resources:
   disk_size_gb: 10
 
 env_variables:
+  IS_APP_ENGINE: 1
   GCP_PROJECT_ID: "your_project_id"
   GEMINI_API_KEY: "your_gemini_api_key"

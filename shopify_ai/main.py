@@ -6,10 +6,20 @@ import mesop.labs as mel
 from py import gemini_integration
 
 GCP_PROJECT_ID = os.getenv("GCP_PROJECT_ID")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-print('Project ID is: ', GCP_PROJECT_ID)
-# Check if running on App Engine
-if os.getenv("GAE_ENV", "").startswith("standard"):
+gemini_integration.genai.configure(
+    api_key=GEMINI_API_KEY
+)
+
+if os.environ.get("IS_APP_ENGINE"):
+    print("The app is being run in App Engine")
+    IS_APP_ENGINE = True
+else:
+    print("The app is being run locally")
+    IS_APP_ENGINE = False
+
+if IS_APP_ENGINE:
     BQ_CLIENT = bigquery.Client(project=GCP_PROJECT_ID)
     print("Running on Google App Engine, using default credentials.")
 else:
