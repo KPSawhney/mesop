@@ -3,3 +3,4 @@ secrets/
 venv/
 shopify_ai.egg-info/
 py/__pycache__/
+__pycache__/
